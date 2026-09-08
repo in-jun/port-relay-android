@@ -1,4 +1,4 @@
-package io.github.injun.portrelay
+package dev.injun.portrelay.relay
 
 import java.io.Closeable
 

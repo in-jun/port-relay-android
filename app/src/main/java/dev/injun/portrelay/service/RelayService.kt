@@ -1,4 +1,4 @@
-package io.github.injun.portrelay
+package dev.injun.portrelay.service
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -7,8 +7,14 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
+import dev.injun.portrelay.R
+import dev.injun.portrelay.relay.RelayConfig
+import dev.injun.portrelay.relay.RelayEngine
+import dev.injun.portrelay.relay.RelayProtocol
 
 class RelayService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
@@ -19,10 +25,15 @@ class RelayService : Service() {
             shutdown()
             return START_NOT_STICKY
         }
-        startForeground(
+        ServiceCompat.startForeground(
+            this,
             NOTIFICATION_ID,
             notification(config),
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+            } else {
+                0
+            },
         )
         RelayEngine.start(config)
         return START_STICKY
@@ -55,8 +66,8 @@ class RelayService : Service() {
     companion object {
         private const val CHANNEL_ID = "relay"
         private const val NOTIFICATION_ID = 1
-        private const val ACTION_START = "io.github.injun.portrelay.START"
-        private const val ACTION_STOP = "io.github.injun.portrelay.STOP"
+        private const val ACTION_START = "dev.injun.portrelay.START"
+        private const val ACTION_STOP = "dev.injun.portrelay.STOP"
 
         fun start(context: Context, config: RelayConfig) {
             val intent = Intent(context, RelayService::class.java).apply {

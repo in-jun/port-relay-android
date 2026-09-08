@@ -1,4 +1,4 @@
-package io.github.injun.portrelay
+package dev.injun.portrelay.relay
 
 enum class RelayProtocol(val label: String) {
     UDP("UDP"),
@@ -6,6 +6,7 @@ enum class RelayProtocol(val label: String) {
     BOTH("Both"),
 }
 
+/** Validated relay configuration. Build one from user input via [from]. */
 data class RelayConfig(
     val listenPort: Int,
     val remoteHost: String,
